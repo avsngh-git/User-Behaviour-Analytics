@@ -56,7 +56,7 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth'
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- }
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- black flake8 mypy isort moto[all] pytest pytest-mock apache-airflow-client }
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
@@ -83,6 +83,8 @@ services:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
       retries: 5
+    ports:
+      - "5432:5432"
     restart: always
 
   airflow-webserver:
@@ -226,7 +228,7 @@ services:
 
   #For Metabase Dashboard
   dashboard:
-    image: metabase/metabase
+    image: metabase/metabase:latest
     container_name: dashboard
     ports:
       - "3000:3000"
