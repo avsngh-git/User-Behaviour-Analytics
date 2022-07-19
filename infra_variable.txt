@@ -1,1 +1,3 @@
 AWS_REGION='ap-south-1'
+AWS_EC2_INSTANCE='t2.large'
+
