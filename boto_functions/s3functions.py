@@ -1,11 +1,10 @@
-
-from urllib import response
+from logger_project import logger
 from botocore.exceptions import ClientError
 import json
 from boto3 import s3
 
 
-def create_bucket(bucket_name, s3_resource, logger):
+def create_bucket(bucket_name, s3_resource):
     """
     bucket_name: a string 
     s3_resource: a S3 resource created
@@ -27,7 +26,7 @@ def create_bucket(bucket_name, s3_resource, logger):
         return response
 
 
-def delete_bucket(bucket_name, s3_resource, logger):
+def delete_bucket(bucket_name, s3_resource):
      """
     bucket_name: a string 
     s3_resource: a S3 resource created

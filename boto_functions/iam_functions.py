@@ -1,8 +1,8 @@
 from botocore.exceptions import ClientError
 import json
+from logger_project import logger
 
-
-def list_roles(count, iam, logger):
+def list_roles(count, iam):
     """
     Lists the specified number of roles for the account.
 
@@ -19,7 +19,7 @@ def list_roles(count, iam, logger):
     else:
         return roles
 
-def create_role(role_name, allowed_services, iam, logger):
+def create_role(role_name, allowed_services, iam):
     """
     Creates a role that lets a list of specified services assume the role.
 
@@ -50,7 +50,7 @@ def create_role(role_name, allowed_services, iam, logger):
     else:
         return role
 
-def delete_role(role_name, iam, logger):
+def delete_role(role_name, iam):
     """
     Deletes a role.
 
@@ -64,7 +64,7 @@ def delete_role(role_name, iam, logger):
         raise
 
 
-def get_role(role_name, iam, logger):
+def get_role(role_name, iam):
     """
     Gets a role by name.
 
@@ -82,7 +82,7 @@ def get_role(role_name, iam, logger):
         return role
 
 
-def attach_policy(role_name, policy_arn, iam, logger):
+def attach_policy(role_name, policy_arn, iam):
     """
     Attaches a policy to a role.
 
@@ -98,7 +98,7 @@ def attach_policy(role_name, policy_arn, iam, logger):
         logger.exception("Couldn't attach policy %s to role %s.", policy_arn, role_name)
         raise
 
-def detach_policy(role_name, policy_arn, iam, logger):
+def detach_policy(role_name, policy_arn, iam):
     """
     Detaches a policy from a role.
 
@@ -118,7 +118,7 @@ def detach_policy(role_name, policy_arn, iam, logger):
 
 # Policy 
 
-def create_policy(name, description, actions, resource_arn, iam, logger):
+def create_policy(name, description, actions, resource_arn, iam):
     """
     Creates a policy that contains a single statement.
 
@@ -154,7 +154,7 @@ def create_policy(name, description, actions, resource_arn, iam, logger):
         return policy
 
 
-def get_default_policy_statement(policy_arn, iam, logger):
+def get_default_policy_statement(policy_arn, iam):
     """
     Gets the statement of the default version of the specified policy.
 
@@ -175,7 +175,7 @@ def get_default_policy_statement(policy_arn, iam, logger):
         return policy_statement
 
 
-def list_policies(scope, iam, logger):
+def list_policies(scope, iam):
     """
     Lists the policies in the current account.
 

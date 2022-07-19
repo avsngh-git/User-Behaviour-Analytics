@@ -1,0 +1,8 @@
+S3 Policy ARNS:
+Full Access = arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+Redshift:
+full access to commands = arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess
+
+EMR:
+full access v2 = arn:aws:iam::aws:policy/AmazonEMRFullAccessPolicy_v2
