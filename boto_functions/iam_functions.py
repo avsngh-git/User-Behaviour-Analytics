@@ -191,3 +191,36 @@ def list_policies(scope, iam):
         raise
     else:
         return policies
+
+def create_instance_profile(profile_name, iam):
+    """ Creates an Instance profile for EC2 compute instance
+    profile_name: string
+    iam: iam resource instance
+    return: the instance profile
+    """
+    try:
+        instance_profile = iam.create_instance_profile(
+            InstanceProfileName=profile_name)
+        logger.info(f'created an instance profile {profile_name}')
+
+    except ClientError:
+        logger.exception(f"Couldn't create an instance profile {profile_name}")
+        raise
+    else:
+        return instance_profile
+    
+def add_role_instance(instance_profile, role_name):
+    """ attaches a role to an EC2 instance profile
+    instance_profile: the instance profile object
+    role_name: name of the role to be attached"""
+
+    try:
+        response = instance_profile.add_role(
+            RoleName=role_name)
+        logger.info(f'attached an role {role_name} to instance profile')
+    except ClientError:
+        logger.exception(f"Couldn't attach a role {role_name} to an instance profile")
+    
+
+
+        

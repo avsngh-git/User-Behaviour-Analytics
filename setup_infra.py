@@ -1,5 +1,5 @@
 from boto_functions.s3functions import create_bucket
-from boto_functions.iam_functions import create_role, attach_policy
+from boto_functions.iam_functions import create_role, attach_policy, create_instance_profile, add_role_instance
 import boto3
 from boto_functions.logger_project import logger
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     #Creating a Role for EC2
     service = ['ec2.amazonaws.com']
     role_name = 'ec2-role-project-sr1-19-7-2022'
-    create_role(role_name=role_name, allowed_services=service, iam=iam_resource)
+    ec2_role = create_role(role_name=role_name, allowed_services=service, iam=iam_resource)
 
     #Attaching Policies to the role
 
@@ -37,3 +37,10 @@ if __name__ == '__main__':
     #Attaching AmazonRedshiftAllCommandsFullAccess Policy 
     redshift_policy_arn = 'arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess'
     attach_policy(role_name=role_name, policy_arn=redshift_policy_arn, iam=iam_resource)
+ 
+    #Creating an intance profile for EC2 instance and the attaching the role we created above to it
+    instance_profile_name = 'ec2-role-project-sr1-19-7-2022-instance-profile'
+    instance_profile = create_instance_profile(instance_profile_name, iam_resource)
+
+    # Attach the role to the instance profile
+    add_role_instance(instance_profile=instance_profile, role_name=role_name)

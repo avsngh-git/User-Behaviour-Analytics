@@ -27,7 +27,7 @@ def create_bucket(bucket_name, s3_resource):
 
 
 def delete_bucket(bucket_name, s3_resource):
-     """
+    """
     bucket_name: a string 
     s3_resource: a S3 resource created
     logger: logger instance
@@ -38,8 +38,8 @@ def delete_bucket(bucket_name, s3_resource):
         logger.info(f"Deleted bucket {bucket_name}")
 
     except ClientError:
-         logger.exception(f"Couldn't delete the {bucket_name} bucket")
-         raise
+        logger.exception(f"Couldn't delete the {bucket_name} bucket")
+        raise
     else:
         return response
 
