@@ -4,7 +4,7 @@ import json
 from boto3 import s3
 
 
-def create_bucket(bucket_name, s3_resource):
+def create_bucket(bucket_name, s3_resource, acl):
     """
     bucket_name: a string 
     s3_resource: a S3 resource created
@@ -13,11 +13,10 @@ def create_bucket(bucket_name, s3_resource):
     try:
         bucket = s3_resource.Bucket(bucket_name)
         response = bucket.create(
-            ACL = 'private',
+            ACL = acl
             CreateBucketConfiguration ={
-                'LocationConstraint' : 'ap-south-1'
-            }
-        )
+                'LocationConstraint' : 'ap-south-1'}
+                )
         logger.info(f"Created bucket {bucket_name}")
     except ClientError:
         logger.exception(f"Couldn't create the {bucket_name} bucket")

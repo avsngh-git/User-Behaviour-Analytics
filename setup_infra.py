@@ -1,7 +1,10 @@
+from boto_functions.ec2_functions import create_key_ec2
 from boto_functions.s3functions import create_bucket
+from boto_functions.ec2_functions import create_key_ec2, create_security_group
 from boto_functions.iam_functions import create_role, attach_policy, create_instance_profile, add_role_instance
 import boto3
 from boto_functions.logger_project import logger
+import socket
 
 if __name__ == '__main__':
     
@@ -12,7 +15,7 @@ if __name__ == '__main__':
 
     # Call S3 functions module to create a bucket for me 
     bucket_name = 'batch-project-sr1-19-7-2022'
-    create_bucket(bucket_name=bucket_name, s3_resource=s3_resource)
+    create_bucket(bucket_name=bucket_name, s3_resource=s3_resource, acl='public-read-write')
 
 
     #Creating role for EC2 to access a bunch of stuff
@@ -44,3 +47,14 @@ if __name__ == '__main__':
 
     # Attach the role to the instance profile
     add_role_instance(instance_profile=instance_profile, role_name=role_name)
+
+    #Now we are going to create an SSH key-value pair to connect to the EC2 instance
+    #first we have to create an EC2 resource.
+    ec2 = boto3.resource('ec2')
+
+    #now we create the key value pair
+    key_name = 'first_project'
+    key_pair = create_key_ec2(key_name=key_name, ec2=ec2)
+
+    #Create a security group to only allow access from my ip
+    ec2_security_group = create_security_group('ec2-project 1', 'for access to ec2 instance for project 1', ec2)
