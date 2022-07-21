@@ -13,7 +13,7 @@ def create_bucket(bucket_name, s3_resource, acl):
     try:
         bucket = s3_resource.Bucket(bucket_name)
         response = bucket.create(
-            ACL = acl
+            ACL = acl,
             CreateBucketConfiguration ={
                 'LocationConstraint' : 'ap-south-1'}
                 )

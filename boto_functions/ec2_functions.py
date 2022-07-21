@@ -39,6 +39,39 @@ def create_security_group(group_name, description, ec2):
     else:
         return security_group
 
-def my_ip():
-    ip = subprocess.run(['curl', '-s', 'http://whatismyip.akamai.com/'],stderr=subprocess.PIPE, text=True)
-    return ip.stderr
+def get_my_ip():
+    process = subprocess.Popen(['curl', '-s', 'http://whatismyip.akamai.com/'],stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    ip = process.communicate()
+    return ip[0]
+
+
+def attach_ingress(my_ip, security_group, group_id):
+    """ attaches ingress rule, Port is hardcoded, free to edit"""
+    cidr = my_ip+'/32'
+    response = security_group.authorize_ingress(
+        CidrIp=cidr,
+        FromPort=23,
+        GroupId= group_id,
+        IpProtocol='tcp',
+        ToPort=23 
+    )
+    return response
+
+def attach_egress(my_ip, security_group):
+    """ attaches egress rule, Port is hardcoded, free to edit"""
+    cidr = my_ip+'/32'
+    response = security_group.authorize_egress(
+        IpPermissions=[
+        {
+            'FromPort': 8080,
+            'IpProtocol': 'tcp',
+            'IpRanges': [
+                {
+                    'CidrIp': cidr,
+                    'Description': 'my_ip'
+                },
+            ],
+            'ToPort': 8080
+        },
+    ],
+    )
