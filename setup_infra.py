@@ -1,10 +1,10 @@
 from boto_functions.ec2_functions import create_key_ec2
 from boto_functions.s3functions import create_bucket
-from boto_functions.ec2_functions import create_key_ec2, create_security_group
+from boto_functions.ec2_functions import create_key_ec2, create_security_group, get_my_ip, attach_egress, attach_ingress
 from boto_functions.iam_functions import create_role, attach_policy, create_instance_profile, add_role_instance
 import boto3
 from boto_functions.logger_project import logger
-import socket
+
 
 if __name__ == '__main__':
     
@@ -58,3 +58,11 @@ if __name__ == '__main__':
 
     #Create a security group to only allow access from my ip
     ec2_security_group = create_security_group('ec2-project 1', 'for access to ec2 instance for project 1', ec2)
+    ec2_security_group_id = ec2_security_group.group_id
+
+    #get my ip 
+    my_ip = get_my_ip()
+
+    #Create Ingress and Egress rules for outbound and inbound access from my ip in the security group created above
+    attach_ingress(my_ip=my_ip, security_group=ec2_security_group, group_id=ec2_security_group_id)
+    attach_egress(my_ip=my_ip, security_group=ec2_security_group)

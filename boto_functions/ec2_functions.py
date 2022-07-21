@@ -40,6 +40,9 @@ def create_security_group(group_name, description, ec2):
         return security_group
 
 def get_my_ip():
+    """Gets my ip by running a bash script using python itself
+    return: returns my ip as a string
+    """
     process = subprocess.Popen(['curl', '-s', 'http://whatismyip.akamai.com/'],stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     ip = process.communicate()
     return ip[0]
@@ -75,3 +78,4 @@ def attach_egress(my_ip, security_group):
         },
     ],
     )
+    return response
