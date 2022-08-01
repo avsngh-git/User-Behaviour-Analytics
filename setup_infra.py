@@ -1,6 +1,6 @@
 from boto_functions.ec2_functions import create_key_ec2
 from boto_functions.s3functions import create_bucket
-from boto_functions.ec2_functions import create_key_ec2, create_security_group, get_my_ip, attach_egress, attach_ingress
+from boto_functions.ec2_functions import create_key_ec2, create_security_group, get_my_ip, attach_egress, attach_ingress, create_instance
 from boto_functions.iam_functions import create_role, attach_policy, create_instance_profile, add_role_instance
 import boto3
 from boto_functions.logger_project import logger
@@ -66,3 +66,7 @@ if __name__ == '__main__':
     #Create Ingress and Egress rules for outbound and inbound access from my ip in the security group created above
     attach_ingress(my_ip=my_ip, security_group=ec2_security_group, group_id=ec2_security_group_id)
     attach_egress(my_ip=my_ip, security_group=ec2_security_group)
+
+    #Create an EC2 instance for processing our data
+    ec2_instance = create_instance(ec2=ec2, security_group_id=ec2_security_group_id, instance_profile_name=instance_profile_name, instance_type='t2.large')
+

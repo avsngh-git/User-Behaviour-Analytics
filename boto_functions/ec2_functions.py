@@ -1,7 +1,7 @@
 import string
 from botocore.exceptions import ClientError
 import json
-from logger_project import logger
+from boto_functions.ec2_functions import logger
 import subprocess
 
 
@@ -78,4 +78,44 @@ def attach_egress(my_ip, security_group):
         },
     ],
     )
-    return response
+
+
+def create_instance(ec2, security_group_id, instance_profile_name, instance_type):
+    """ creates an EC2 instance for our computing needs
+    Hardcoded: instance number max and min values, OS image_id, volumetype, availability zone, 
+    """
+    try:
+        instance = ec2.create_instances(
+        BlockDeviceMappings=[
+            {
+                'Ebs': {
+                    'DeleteOnTermination': False,
+                    'Iops': 200,
+                    'VolumeSize': 8,
+                    'VolumeType': 'gp2'
+                },
+            },
+        ],
+        ImageId='ami-08df646e18b182346',
+        InstanceType=instance_type,
+        MaxCount=1,
+        MinCount=1,
+        Monitoring={
+            'Enabled': False
+        },
+        Placement={
+            'AvailabilityZone': 'ap-south-1'
+        },
+        SecurityGroupIds=[
+            security_group_id
+        ],
+        IamInstanceProfile={
+            'Name': instance_profile_name
+        },
+        DisableApiStop=False
+        )
+    except ClientError:
+        
+        raise
+    else:
+        return instance
