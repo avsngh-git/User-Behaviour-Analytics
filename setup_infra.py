@@ -70,3 +70,7 @@ if __name__ == '__main__':
     #Create an EC2 instance for processing our data
     ec2_instance = create_instance(ec2=ec2, security_group_id=ec2_security_group_id, instance_profile_name=instance_profile_name, instance_type='t2.large')
 
+    #Lets Get Instance id of the EC2 instance
+    instance_id = ec2_instance.describe_attribute(
+        Attribute = 'InstanceId'
+    )
