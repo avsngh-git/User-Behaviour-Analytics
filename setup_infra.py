@@ -70,7 +70,9 @@ if __name__ == '__main__':
     #Create an EC2 instance for processing our data
     ec2_instance = create_instance(ec2=ec2, security_group_id=ec2_security_group_id, instance_profile_name=instance_profile_name, instance_type='t2.large')
 
-    #Lets Get Instance id of the EC2 instance
-    instance_id = ec2_instance.describe_attribute(
-        Attribute = 'InstanceId'
+    #Lets Get Instance id of the EC2 instance. 
+    #create instance function returns a list object and thus we have to do ec2_instance[0] to actually get the instance object and use descrive_attribute action on it
+    instance_attr = ec2_instance[0].describe_attribute( 
+        Attribute = 'instanceType'
     )
+    instance_id = instance_attr['InstanceId']
