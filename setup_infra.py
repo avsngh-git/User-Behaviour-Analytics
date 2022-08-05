@@ -1,7 +1,9 @@
+from venv import create
 from boto_functions.ec2_functions import create_key_ec2
 from boto_functions.s3functions import create_bucket
 from boto_functions.ec2_functions import create_key_ec2, create_security_group, get_my_ip, attach_egress, attach_ingress, create_instance
 from boto_functions.iam_functions import create_role, attach_policy, create_instance_profile, add_role_instance
+from boto_functions.emr import create_cluster
 import boto3
 from boto_functions.logger_project import logger
 
@@ -76,3 +78,10 @@ if __name__ == '__main__':
         Attribute = 'instanceType'
     )
     instance_id = instance_attr['InstanceId']
+
+    #Creating an EMR cluster to run hadoop and spark for processing
+    emr = boto3.client('emr')
+    cluster_name = 'project_cluster'
+    key_name = 'emr_ec2_project1'
+    emr_ec2_key = create_key_ec2(ec2=ec2, key_name=key_name)
+    emr_cluster = create_cluster(client=emr, name=cluster_name, key_name=key_name, instance_role='EMR_EC2_DefaultRole', emr_role='EMR_Service_Role' )
