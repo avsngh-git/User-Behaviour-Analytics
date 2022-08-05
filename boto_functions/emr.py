@@ -14,9 +14,6 @@ def create_cluster(client, name, key_name, instance_role, emr_role):
             LogUri='string',
             ReleaseLabel='emr-6.7.0',
             Instances={
-                'MasterInstanceType': 'm5.xlarge',
-                'SlaveInstanceType': 'm5.xlarge',
-                'InstanceCount': 3,
                 'InstanceGroups': [
                     {
                         'Name': 'master',
@@ -61,17 +58,10 @@ def create_cluster(client, name, key_name, instance_role, emr_role):
                 'KeepJobFlowAliveWhenNoSteps': False,
                 'TerminationProtected': False
             },
-            NewSupportedProducts=[
-                {
-                    'Name': 'spark',
-                    'Args': [
-                    ]
-                },
-            ],
             Applications=[
                 {
                     'Name': 'spark',
-                    'Version': '3.2.1'
+                    
                     
                 },
             ],
