@@ -2,9 +2,8 @@ from botocore.exceptions import ClientError
 import json
 from logger_project import logger
 
-def create_redshift_cluster(client, cluster_identifier, cluster_type, node_type, master_username, master_password, iam_role):
+def create_redshift_cluster(client, cluster_identifier, cluster_type, node_type, master_username, master_password, iam_role_arn):
     """Creates an AWS Redshift Cluster"""
-
     try:
         cluster = client.create_cluster(
             ClusterIdentifier=cluster_identifier,
@@ -14,9 +13,11 @@ def create_redshift_cluster(client, cluster_identifier, cluster_type, node_type,
             MasterUserPassword=master_password,  
             AutomatedSnapshotRetentionPeriod=0,
             ManualSnapshotRetentionPeriod=1,
+            IamRoles=[
+                iam_role_arn
+            ],
             Port=5739,          
             PubliclyAccessible=True,
-            DefaultIamRoleArn=iam_role,
         )
         logger.info(f'redshift cluster {cluster_identifier} was created')
     

@@ -1,9 +1,11 @@
+from platform import node
 from venv import create
 from boto_functions.ec2_functions import create_key_ec2
 from boto_functions.s3functions import create_bucket
 from boto_functions.ec2_functions import create_key_ec2, create_security_group, get_my_ip, attach_egress, attach_ingress, create_instance
 from boto_functions.iam_functions import create_role, attach_policy, create_instance_profile, add_role_instance
 from boto_functions.emr import create_cluster
+from boto_functions.redshift_functions import create_redshift_cluster
 import boto3
 from boto_functions.logger_project import logger
 
@@ -85,3 +87,24 @@ if __name__ == '__main__':
     key_name = 'emr_ec2_project1'
     emr_ec2_key = create_key_ec2(ec2=ec2, key_name=key_name)
     emr_cluster = create_cluster(client=emr, name=cluster_name, key_name=key_name, instance_role='EMR_EC2_DefaultRole', emr_role='EMR_Service_Role' )
+    emr_id = emr_cluster['JobFlowId']
+    # Waiter will wait till cluster is operational
+    emr_waiter = emr.get_waiter('cluster_running')
+    emr_waiter.wait(ClusterId=emr_id)
+
+    # Creating Redshift Cluster
+    redshift_client = boto3.client('redshift')
+    redshift_role_name = 'redshift-role-project1'
+    redshift_service = ['redshift.amazonaws.com']
+    redshift_role = create_role(role_name=redshift_role_name, allowed_services=redshift_service, iam=iam_resource)
+    attach_policy(role_name=redshift_role_name, policy_arn='arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess', iam=iam_resource)
+    attach_policy(role_name=redshift_role_name, policy_arn='arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess', iam=iam_resource)
+    redshift_role_arn = redshift_role.arn
+    cluster_identifier = 'redshift-project-1'
+    cluster_type = 'single-node'
+    node_type = 'dc2.large'
+    redshift_cluster = create_redshift_cluster(client=redshift_client, cluster_identifier=cluster_identifier, cluster_type=cluster_type, 
+        node_type=node_type, master_username='redshift-user-project-1', master_password='redshift-project-1', iam_role_arn=redshift_role_arn )
+    # Adding a waiter to wait till the cluster is created
+    redshift_cluster_waiter = redshift_client.get_waiter('cluster_available')
+    redshift_cluster_waiter.wait(ClusterIdentifier=cluster_identifier)
