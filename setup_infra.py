@@ -5,7 +5,7 @@ from boto_functions.s3functions import create_bucket
 from boto_functions.ec2_functions import create_key_ec2, create_security_group, get_my_ip, attach_egress, attach_ingress, create_instance
 from boto_functions.iam_functions import create_role, attach_policy, create_instance_profile, add_role_instance
 from boto_functions.emr import create_cluster
-from boto_functions.redshift_functions import create_redshift_cluster
+from boto_functions.redshift_functions import create_redshift_cluster, run_sql_commands
 import boto3
 from boto_functions.logger_project import logger
 
@@ -108,3 +108,7 @@ if __name__ == '__main__':
     # Adding a waiter to wait till the cluster is created
     redshift_cluster_waiter = redshift_client.get_waiter('cluster_available')
     redshift_cluster_waiter.wait(ClusterIdentifier=cluster_identifier)
+
+    #creating databases and required tables in redshift
+    sql_statements = (open("./redshiftsetup/setup.sql", 'r')).read()
+    run_sql_commands(redshift_client, cluster_identifier, sql_statements)

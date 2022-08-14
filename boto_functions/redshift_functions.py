@@ -2,10 +2,11 @@ from botocore.exceptions import ClientError
 import json
 from logger_project import logger
 
-def create_redshift_cluster(client, cluster_identifier, cluster_type, node_type, master_username, master_password, iam_role_arn):
+def create_redshift_cluster(client, db_name, cluster_identifier, cluster_type, node_type, master_username, master_password, iam_role_arn):
     """Creates an AWS Redshift Cluster"""
     try:
         cluster = client.create_cluster(
+            DBName=db_name,
             ClusterIdentifier=cluster_identifier,
             ClusterType=cluster_type,
             NodeType=node_type,
@@ -26,4 +27,18 @@ def create_redshift_cluster(client, cluster_identifier, cluster_type, node_type,
         raise
     else:
         return cluster
+
+def run_sql_commands(client, cluster_identifier, sql_script):
+    try:
+        response = client.batch_execute_statement(
+            ClusterIdentifier=cluster_identifier,
+            Sqls=[
+                'redshiftsetup/,
+            ],
+        )
+        logger.info('statements succesfully executed')
+    
+    except ClientError:
+        logger.info('failed to execute redshift sql statements')
+        raise
     
