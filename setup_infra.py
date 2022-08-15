@@ -110,5 +110,5 @@ if __name__ == '__main__':
     redshift_cluster_waiter.wait(ClusterIdentifier=cluster_identifier)
 
     #creating databases and required tables in redshift
-    sql_statements = (open("./redshiftsetup/setup.sql", 'r')).read()
+    sql_statements = (open("./redshiftsetup/setup.sql", 'r')).read().split(';')
     run_sql_commands(redshift_client, cluster_identifier, sql_statements)

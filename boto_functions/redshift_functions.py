@@ -28,13 +28,12 @@ def create_redshift_cluster(client, db_name, cluster_identifier, cluster_type, n
     else:
         return cluster
 
-def run_sql_commands(client, cluster_identifier, sql_script):
+def run_sql_commands(client, cluster_identifier:str, sql_script:list):
     try:
         response = client.batch_execute_statement(
             ClusterIdentifier=cluster_identifier,
-            Sqls=[
-                'redshiftsetup/,
-            ],
+            Sqls=
+                sql_script,  
         )
         logger.info('statements succesfully executed')
     

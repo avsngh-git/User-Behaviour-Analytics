@@ -1,5 +1,5 @@
-CREATE EXTERNAL SCHEMA spectrum
-FROM DATA CATALOG DATABASE 'spectrumdb' iam_role 'arn:aws:iam::"$AWS_ID":role/"$IAM_ROLE_NAME"' CREATE EXTERNAL DATABASE IF NOT EXISTS;
+CREATE EXTERNAL SCHEMA IF NOT EXISTS 'spectrum'
+FROM DATA CATALOG DATABASE 'spectrumdb' iam_role 'arn:aws:iam::130747997504:role/redshift-role' CREATE EXTERNAL DATABASE IF NOT EXISTS;
 DROP TABLE IF EXISTS spectrum.user_purchase_staging;
 CREATE EXTERNAL TABLE spectrum.user_purchase_staging (
     InvoiceNo VARCHAR(10),

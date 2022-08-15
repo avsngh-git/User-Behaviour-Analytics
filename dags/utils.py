@@ -8,7 +8,7 @@ from airflow.hooks.S3_hook import S3Hook
 
 def _local_to_s3(
     bucket_name: str, key: str, file_name: str, remove_local: bool = False
-) -> None:
+    ) -> None:
     s3 = S3Hook()
     s3.load_file(
         filename=file_name, bucket_name=bucket_name, replace=True, key=key
