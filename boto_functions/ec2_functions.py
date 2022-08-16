@@ -82,7 +82,7 @@ def attach_egress(my_ip, security_group):
 
 def create_instance(ec2, security_group_id, instance_profile_name, instance_type):
     """ creates an EC2 instance for our computing needs
-    Hardcoded: instance number max and min values, OS image_id, volumetype, availability zone, 
+    Hardcoded: instance number max and min values, OS image_id, volumetype,  
     """
     try:
         instance = ec2.create_instances(
@@ -96,7 +96,8 @@ def create_instance(ec2, security_group_id, instance_profile_name, instance_type
                     }
                 }
             ],
-            ImageId='ami-08df646e18b182346',
+            KeyName='test',
+            ImageId='ami-068257025f72f470d',
             InstanceType=instance_type,
             MaxCount=1,
             MinCount=1,

@@ -1,5 +1,7 @@
 from platform import node
+from sqlite3 import connect
 from venv import create
+from botocore.exceptions import ClientError
 from boto_functions.ec2_functions import create_key_ec2
 from boto_functions.s3functions import create_bucket
 from boto_functions.ec2_functions import create_key_ec2, create_security_group, get_my_ip, attach_egress, attach_ingress, create_instance
@@ -8,6 +10,34 @@ from boto_functions.emr import create_cluster
 from boto_functions.redshift_functions import create_redshift_cluster, run_sql_commands
 import boto3
 from boto_functions.logger_project import logger
+from fabric.connection import Connection
+import subprocess
+
+def ssh_ec2_connection(host_ip:str):
+    connect = Connection(host=host_ip, user='ubuntu', port=22, connect_kwargs={'key_filename':'/home/avinash/data/test.pem'})
+    return connect
+
+def copy_to_ec2(host_ip):
+    """Zips all the code in the project to be copied to EC2 instance via SSH
+    After it is copied it is unzipped to be ready for use"""
+    try:
+        subprocess.run(['zip', '-r', 'user_analytics', './../User-Behaviour-Analytics']) # Zips all the code
+        ssh_connection = ssh_ec2_connection(host_ip=host_ip) #calls the ssh_ec2_connection function to create a connection object
+        ssh_connection.open() #opens the connection using the connection object attributes
+        ssh_connection.run(command='mkdir user_behaviour_analytics')
+        ssh_connection.put('user_analytics.zip', 'user_behaviour_analytics/') #puts the zip file into the folder we created on the remote server
+
+        ssh_connection.run(command='sudo apt-get install unzip') #need to install unzip for unzipping
+        ssh_connection.run(command='unzip user_analytics.zip -d user_behaviour_analytics/')
+        logger.info('copied to ec2 and unzipped successfully')
+    except ClientError:
+        logger.info('failed to copy and unzip to ec2 instance')
+        raise
+
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -80,6 +110,15 @@ if __name__ == '__main__':
         Attribute = 'instanceType'
     )
     instance_id = instance_attr['InstanceId']
+
+    #lets use the instance as an service resource
+    instance = ec2_instance.Instance(instance_id)
+    host_ip = instance.public_ip_address #ip address of the lanched instance
+
+    #Zipping and then copying the code to the EC2 Instance and then unzipping it there for use
+    copy_to_ec2(host_ip=host_ip)
+   
+    
 
     #Creating an EMR cluster to run hadoop and spark for processing
     emr = boto3.client('emr')
